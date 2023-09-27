@@ -48,7 +48,7 @@ public class PrimaryController implements Initializable {
         );
 
         try{
-            veiculoDao.inserir(veiculo);
+            veiculoDao.inserirVeiculo(veiculo);
             tabela.getItems().add(veiculo);
         }catch(SQLException e){
             e.printStackTrace();
@@ -75,7 +75,7 @@ public class PrimaryController implements Initializable {
                 return;
             }
             
-            veiculoDao.apagar(veiculoSelecionado);
+            veiculoDao.apagarVeiculo(veiculoSelecionado);
             tabela.getItems().remove(veiculoSelecionado);
             
         } catch (SQLException e) {
@@ -136,7 +136,7 @@ public class PrimaryController implements Initializable {
 
     private void atualizar(Veiculo veiculo) {
         try {
-            veiculoDao.atualizar(veiculo);
+            veiculoDao.atualizarVeiculo(veiculo);
         } catch (SQLException e) {
             e.printStackTrace();
             mostrarMensagemDeErro("Erro ao atualizar dados do veículo");
