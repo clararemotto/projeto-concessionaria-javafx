@@ -11,13 +11,13 @@
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.VBox?>
 
-<TabPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" tabClosingPolicy="UNAVAILABLE" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/20.0.1" fx:controller="com.example.PrimaryController">
+<TabPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" tabClosingPolicy="UNAVAILABLE" xmlns="http://javafx.com/javafx/20.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.PrimaryController">
   <tabs>
     <Tab text="Veículos">
          <content>
             <BorderPane prefHeight="200.0" prefWidth="200.0">
                <center>
-                  <TableView fx:id="tabela" prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+                  <TableView fx:id="tabelaVeiculos" prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
                     <columns>
                       <TableColumn fx:id="colMarca" prefWidth="75.0" text="marca" />
                       <TableColumn fx:id="colModelo" prefWidth="75.0" text="modelo" />
@@ -40,8 +40,8 @@
                         <TextField fx:id="txtAno" layoutX="10.0" layoutY="69.0" />
                         <Label layoutX="10.0" layoutY="94.0" text="Valor" />
                         <TextField fx:id="txtValor" layoutX="10.0" layoutY="111.0" />
-                        <Button mnemonicParsing="false" onAction="#salvar" prefHeight="25.0" prefWidth="121.0" text="salvar" />
-                        <Button mnemonicParsing="false" onAction="#apagar" prefHeight="25.0" prefWidth="121.0" text="apagar" />
+                        <Button mnemonicParsing="false" onAction="#salvarVeiculo" prefHeight="25.0" prefWidth="121.0" text="salvar" />
+                        <Button mnemonicParsing="false" onAction="#apagarVeiculo" prefHeight="25.0" prefWidth="121.0" text="apagar" />
                      </children>
                      <padding>
                         <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
@@ -52,7 +52,34 @@
          </content></Tab>
     <Tab text="Clientes">
          <content>
-            <Label text="Tela de Clientes" />
+            <BorderPane prefHeight="200.0" prefWidth="200.0">
+               <center>
+                  <TableView fx:id="tabelaClientes" prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+                     <columns>
+                        <TableColumn fx:id="colNome" prefWidth="75.0" text="nome" />
+                        <TableColumn fx:id="colEmail" prefWidth="75.0" text="email" />
+                     </columns>
+                     <columnResizePolicy>
+                        <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
+                     </columnResizePolicy>
+                  </TableView>
+               </center>
+               <left>
+                  <VBox prefHeight="371.0" prefWidth="139.0" spacing="5.0" BorderPane.alignment="CENTER">
+                     <children>
+                        <Label text="Nome" />
+                        <TextField fx:id="txtNome" />
+                        <Label layoutX="10.0" layoutY="10.0" text="Email" />
+                        <TextField fx:id="txtEmail" layoutX="10.0" layoutY="27.0" />
+                        <Button mnemonicParsing="false" onAction="#salvarCliente" prefHeight="25.0" prefWidth="121.0" text="salvar" />
+                        <Button mnemonicParsing="false" onAction="#apagarCliente" prefHeight="25.0" prefWidth="121.0" text="apagar" />
+                     </children>
+                     <padding>
+                        <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                     </padding>
+                  </VBox>
+               </left>
+            </BorderPane>
          </content></Tab>
   </tabs>
 </TabPane>

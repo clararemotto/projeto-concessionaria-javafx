@@ -5,10 +5,11 @@ import java.net.URL;
 import java.sql.SQLException;
 import java.util.ResourceBundle;
 
+import com.example.data.ClienteDao;
 import com.example.data.VeiculoDao;
+import com.example.model.Cliente;
 import com.example.model.Veiculo;
 
-import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Alert;
@@ -29,15 +30,24 @@ public class PrimaryController implements Initializable {
     @FXML private TextField txtAno;
     @FXML private TextField txtValor;
 
-    @FXML TableView<Veiculo> tabela;
+    @FXML TableView<Veiculo> tabelaVeiculos;
     @FXML TableColumn<Veiculo, String> colMarca;
     @FXML TableColumn<Veiculo, String> colModelo;
     @FXML TableColumn<Veiculo, Integer> colAno;
     @FXML TableColumn<Veiculo, BigDecimal> colValor;
 
-    private VeiculoDao veiculoDao = new VeiculoDao();
+    @FXML private TextField txtNome;
+    @FXML private TextField txtEmail;
 
-    public void salvar(){
+    @FXML TableView<Cliente> tabelaClientes;
+    @FXML TableColumn<Cliente, String> colNome;
+    @FXML TableColumn<Cliente, String> colEmail;
+    
+
+    private VeiculoDao veiculoDao = new VeiculoDao();
+    private ClienteDao clienteDao = new ClienteDao();
+
+    public void salvarVeiculo(){
 
         var veiculo = new Veiculo(
             null, 
@@ -48,35 +58,61 @@ public class PrimaryController implements Initializable {
         );
 
         try{
-            veiculoDao.inserirVeiculo(veiculo);
-            tabela.getItems().add(veiculo);
+            veiculoDao.inserir(veiculo);
+            tabelaVeiculos.getItems().add(veiculo);
         }catch(SQLException e){
             e.printStackTrace();
         }
 
     }
 
-    private void consultar() {
+    public void salvarCliente(){
+
+        var cliente = new Cliente(
+            null, 
+            txtNome.getText(), 
+            txtEmail.getText()
+        );
+
+        try{
+            clienteDao.inserir(cliente);
+            tabelaClientes.getItems().add(cliente);
+        }catch(SQLException e){
+            e.printStackTrace();
+        }
+
+    }
+
+    private void consultarVeiculo() {
         try {
-            veiculoDao.listarTodos().forEach(veiculo -> tabela.getItems().add(veiculo));
+            veiculoDao.listarTodos().forEach(veiculo -> tabelaVeiculos.getItems().add(veiculo));
         } catch (SQLException e) {
             e.printStackTrace();
             mostrarMensagemDeErro("Não foi possível carregar os dados do banco");
         }
     }
 
-    public void apagar(){
+    private void consultarCliente() {
+        try {
+            clienteDao.listarTodos().forEach(cliente -> tabelaClientes.getItems().add(cliente));
+        } catch (SQLException e) {
+            e.printStackTrace();
+            mostrarMensagemDeErro("Não foi possível carregar os dados do banco");
+        }
+    }
+
+    public void apagarVeiculo(){
         if(!confirmarExclusao()) return;
         
         try {
-            var veiculoSelecionado = tabela.getSelectionModel().getSelectedItem();
+            var veiculoSelecionado = tabelaVeiculos.getSelectionModel().getSelectedItem();
             if (veiculoSelecionado == null) {
                 mostrarMensagemDeErro("Você deve selecionar um veículo para apagar");
                 return;
             }
             
-            veiculoDao.apagarVeiculo(veiculoSelecionado);
-            tabela.getItems().remove(veiculoSelecionado);
+            veiculoDao.apagar(veiculoSelecionado);
+            tabelaVeiculos.getItems().remove(veiculoSelecionado);
             
         } catch (SQLException e) {
             e.printStackTrace();
@@ -85,10 +121,30 @@ public class PrimaryController implements Initializable {
 
     }
 
+    public void apagarCliente(){
+        if(!confirmarExclusao()) return;
+        
+        try {
+            var clienteSelecionado = tabelaClientes.getSelectionModel().getSelectedItem();
+            if (clienteSelecionado == null) {
+                mostrarMensagemDeErro("Você deve selecionar um cliente para apagar");
+                return;
+            }
+            
+            clienteDao.apagar(clienteSelecionado);
+            tabelaClientes.getItems().remove(clienteSelecionado);
+            
+        } catch (SQLException e) {
+            e.printStackTrace();
+            mostrarMensagemDeErro("Erro ao apagar o cliente do banco de dados");
+        }
+
+    }
+
     private boolean confirmarExclusao() {
         var alert = new Alert(AlertType.CONFIRMATION);
         alert.setHeaderText("Atenção");
-        alert.setContentText("Tem certeza que deseja apagar o veículo selecionado? Essa ação não poderá ser desfeita.");
+        alert.setContentText("Tem certeza que deseja apagar o item selecionado? Essa ação não poderá ser desfeita.");
         return alert.showAndWait()
                 .get()
                 .getButtonData()
@@ -102,44 +158,61 @@ public class PrimaryController implements Initializable {
         alert.show();
     }
 
+
+
+
     @Override
     public void initialize(URL arg0, ResourceBundle arg1) {
         colModelo.setCellValueFactory(new PropertyValueFactory<>("modelo"));
         colModelo.setCellFactory(TextFieldTableCell.forTableColumn());
         colModelo.setOnEditCommit(event -> {
-            atualizar(event.getRowValue().modelo(event.getNewValue()));
+            atualizarVeiculo(event.getRowValue().modelo(event.getNewValue()));
         });
 
         colMarca.setCellValueFactory(new PropertyValueFactory<>("marca"));
         colMarca.setCellFactory(TextFieldTableCell.forTableColumn());
         colMarca.setOnEditCommit(event -> {
-            atualizar(event.getRowValue().marca(event.getNewValue()));
+            atualizarVeiculo(event.getRowValue().marca(event.getNewValue()));
         });
 
         colAno.setCellValueFactory(new PropertyValueFactory<>("ano"));
         colAno.setCellFactory(TextFieldTableCell.forTableColumn(new IntegerStringConverter()));
         colAno.setOnEditCommit(event -> {
-            atualizar(event.getRowValue().ano(event.getNewValue()));
+            atualizarVeiculo(event.getRowValue().ano(event.getNewValue()));
         });
 
         colValor.setCellValueFactory(new PropertyValueFactory<>("valor"));
         colValor.setCellFactory(TextFieldTableCell.forTableColumn(new BigDecimalStringConverter()));
-        colValor.setOnEditCommit(event -> {
-            atualizar(event.getRowValue().valor(event.getNewValue()));
-        });
+        
+        colNome.setCellValueFactory(new PropertyValueFactory<>("nome"));
+        colNome.setCellFactory(TextFieldTableCell.forTableColumn());
 
-        tabela.setEditable(true);
+        colEmail.setCellValueFactory(new PropertyValueFactory<>("email"));
+        colEmail.setCellFactory(TextFieldTableCell.forTableColumn());
+        
+        tabelaVeiculos.setEditable(true);
+        tabelaClientes.setEditable(true);
 
-        consultar();
+        consultarVeiculo();
+        consultarCliente();
 
     }
 
-    private void atualizar(Veiculo veiculo) {
+    private void atualizarVeiculo(Veiculo veiculo) {
         try {
-            veiculoDao.atualizarVeiculo(veiculo);
+            veiculoDao.atualizar(veiculo);
         } catch (SQLException e) {
             e.printStackTrace();
             mostrarMensagemDeErro("Erro ao atualizar dados do veículo");
+        }
+    }
+
+    private void atualizarCliente(Cliente cliente) {
+        try {
+            clienteDao.atualizar(cliente);
+        } catch (SQLException e) {
+            e.printStackTrace();
+            mostrarMensagemDeErro("Erro ao atualizar dados do cliente");
         }
     }
 

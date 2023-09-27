@@ -10,10 +10,10 @@ import com.example.model.Veiculo;
 public class VeiculoDao {
 
     final String URL = "jdbc:oracle:thin:@oracle.fiap.com.br:1521:ORCL";
-    final String USER = "rm97898";
-    final String PASS = "210904";
+    final String USER = "pf1389";
+    final String PASS = "fiap23";
 
-    public void inserirVeiculo(Veiculo veiculo) throws SQLException{
+    public void inserir(Veiculo veiculo) throws SQLException{
 
         var conexao = DriverManager.getConnection(URL, USER, PASS);
 
@@ -52,7 +52,7 @@ public class VeiculoDao {
         return lista;
     }
 
-    public void apagarVeiculo(Veiculo veiculo) throws SQLException{
+    public void apagar(Veiculo veiculo) throws SQLException{
         var conexao = DriverManager.getConnection(URL, USER, PASS);
         var comando = conexao.prepareStatement("DELETE FROM veiculos WHERE id=?");
         comando.setLong(1, veiculo.getId());
@@ -60,7 +60,7 @@ public class VeiculoDao {
         conexao.close();
     }
 
-    public void atualizarVeiculo(Veiculo veiculo) throws SQLException{
+    public void atualizar(Veiculo veiculo) throws SQLException{
         var conexao = DriverManager.getConnection(URL, USER, PASS);
         var comando = conexao.prepareStatement("UPDATE veiculos SET marca=?, modelo=?, ano=?, valor=? WHERE id=?");
         comando.setString(1, veiculo.getMarca());
