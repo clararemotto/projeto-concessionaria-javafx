@@ -3,15 +3,13 @@ package com.example.model;
 import java.math.BigDecimal;
 
 public class Veiculo {
-
+    
     private Long id;
-    // inteiro longo (faixa maior de valores)
     private String marca;
     private String modelo;
     private Integer ano;
     private BigDecimal valor;
-    // valores monetarios
-    
+
     public Veiculo(Long id, String marca, String modelo, Integer ano, BigDecimal valor) {
         this.id = id;
         this.marca = marca;
@@ -60,5 +58,24 @@ public class Veiculo {
         this.valor = valor;
     }
 
-    
+    public Veiculo modelo(String modelo){
+        this.setModelo(modelo);
+        return this;
+    }
+
+    public Veiculo marca(String marca) {
+        this.marca = marca;
+        return this;
+    }
+
+    public Veiculo ano(Integer ano) {
+        this.ano = ano;
+        return this;
+    }
+
+    public Veiculo valor(BigDecimal valor) {
+        this.valor = valor;
+        return this;
+    }
+
 }
