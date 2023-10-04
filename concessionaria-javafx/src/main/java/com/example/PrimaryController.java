@@ -15,6 +15,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.ButtonBar.ButtonData;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
@@ -29,12 +30,14 @@ public class PrimaryController implements Initializable {
     @FXML private TextField txtModelo;
     @FXML private TextField txtAno;
     @FXML private TextField txtValor;
+    @FXML private ComboBox<Cliente> cboCliente;
 
     @FXML TableView<Veiculo> tabelaVeiculos;
     @FXML TableColumn<Veiculo, String> colMarca;
     @FXML TableColumn<Veiculo, String> colModelo;
     @FXML TableColumn<Veiculo, Integer> colAno;
     @FXML TableColumn<Veiculo, BigDecimal> colValor;
+    @FXML TableColumn<Veiculo, Cliente> colCLiente;
 
     @FXML private TextField txtNome;
     @FXML private TextField txtEmail;
@@ -42,7 +45,7 @@ public class PrimaryController implements Initializable {
     @FXML TableView<Cliente> tabelaClientes;
     @FXML TableColumn<Cliente, String> colNome;
     @FXML TableColumn<Cliente, String> colEmail;
-    
+
 
     private VeiculoDao veiculoDao = new VeiculoDao();
     private ClienteDao clienteDao = new ClienteDao();
@@ -54,7 +57,9 @@ public class PrimaryController implements Initializable {
             txtModelo.getText(), 
             txtMarca.getText(), 
             Integer.valueOf(txtAno.getText()), 
-            new BigDecimal(txtValor.getText())
+            new BigDecimal(txtValor.getText()),
+            cboCliente.getSelectionModel()
+                        .getSelectedItem()
         );
 
         try{
@@ -158,7 +163,14 @@ public class PrimaryController implements Initializable {
         alert.show();
     }
 
-
+    public void carregarComboBoxCLiente() {
+        try {
+            cboCliente.getItems().addAll(clienteDao.listarTodos());
+        } catch (SQLException e) {
+            e.printStackTrace();
+            mostrarMensagemDeErro("Erro ao carregar dados dos clientes!");
+        }
+    }
 
 
     @Override
@@ -189,13 +201,15 @@ public class PrimaryController implements Initializable {
 
         colEmail.setCellValueFactory(new PropertyValueFactory<>("email"));
         colEmail.setCellFactory(TextFieldTableCell.forTableColumn());
+
+        colCLiente.setCellValueFactory(new PropertyValueFactory<>("cliente"));
         
         tabelaVeiculos.setEditable(true);
         tabelaClientes.setEditable(true);
 
         consultarVeiculo();
         consultarCliente();
-
+        carregarComboBoxCLiente();
     }
 
     private void atualizarVeiculo(Veiculo veiculo) {
